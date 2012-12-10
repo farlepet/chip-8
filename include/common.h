@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <time.h>
 
 #ifndef COMMON_H
 #define COMMON_H

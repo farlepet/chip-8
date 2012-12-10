@@ -1,5 +1,5 @@
 #####generic conf
-SRC_FILTER = .c
+SRC_FILTER = .cpp
 LIBS  = -lm
 LIBS += `sdl-config --cflags --libs`
 CFLAGS = -Wall -Wextra -Os -g -ffast-math -I./include/
@@ -15,7 +15,7 @@ ifeq ($(CONF),.)
 #mkres := $(shell mkdir $(CONF))
 CFLAGS += 
 TARGET = chip8
-CC = gcc
+CC = g++
 LD = gcc
 endif
 ####
