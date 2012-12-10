@@ -262,11 +262,15 @@ void chip8::setpixel(int x, int y, u32int c)
 {
 	Uint32 *pixmem32;
     Uint32 colour;  
- 
+	x *= gfx_scale;
+	y *= gfx_scale;
     colour = SDL_MapRGB( screen->format, (c&0xFF0000)>>15, (c&0xFF00)>>7, (c&0xFF));
   
     pixmem32 = (Uint32*) screen->pixels  + y*screen->w + x;
-    *pixmem32 = colour;
+	int i, j;
+	for(i = 0; i < gfx_scale; i++)
+		for(j = 0; j < gfx_scale; j++)
+			*(Uint32 *)((pixmem32) + i + j * screen->w) = colour;
 	//setscreenpixel(sdl_screen, x, y, (c&0xFF0000)>>15, (c&0xFF00)>>7, c&0xFF);
 }
 
@@ -301,4 +305,99 @@ SDL_Event chip8::get_input()
 {
 	SDL_PollEvent(&event);
 	return event;
+}
+
+void chip8::loadRom(const char * filename)
+{
+	init();
+	printf("Loading: %s\n", filename);
+		
+	FILE *rom;
+	if ((rom = fopen(filename, "rb")) == NULL) { fputs("File error", stderr); exit(0); }
+
+	// Check file size
+	fseek(rom , 0 , SEEK_END);
+	long lSize = ftell(rom);
+	rewind(rom);
+	printf("Filesize: %d\n", (int)lSize);
+
+	// Allocate memory to contain the whole file
+	char * buffer = (char*)malloc(sizeof(char) * lSize);
+	if (buffer == NULL)  { fputs ("Memory error", stderr); exit(0); }
+
+	// Copy the file into the buffer
+	size_t result = fread (buffer, 1, lSize, rom);
+	if (result != lSize)  { fputs("Reading error", stderr);  exit(0); }
+
+	// Copy buffer to Chip8 memory
+	if((4096-512) > lSize) 
+		for(int i = 0; i < lSize; ++i) memory[i + 512] = buffer[i];
+	else
+		printf("Error: ROM too big for memory");
+	
+	// Close file, free buffer
+	fclose(rom);
+	free(buffer);
+
+	return;
+}
+
+void chip8::process_input()
+{
+	while (SDL_PollEvent(&event))   //Poll our SDL key event for any keystrokes.
+	{
+		switch(event.type){
+			case SDL_KEYDOWN:
+				switch(event.key.keysym.sym){
+					case SDLK_1: key[0x1] = 1; break;
+					case SDLK_2: key[0x2] = 1; break;
+					case SDLK_3: key[0x3] = 1; break;
+					case SDLK_4: key[0xC] = 1; break;
+
+					case SDLK_q: key[0x4] = 1; break;
+					case SDLK_w: key[0x5] = 1; break;
+					case SDLK_e: key[0x6] = 1; break;
+					case SDLK_r: key[0xD] = 1; break;
+
+					case SDLK_a: key[0x7] = 1; break;
+					case SDLK_s: key[0x8] = 1; break;
+					case SDLK_d: key[0x9] = 1; break;
+					case SDLK_f: key[0xE] = 1; break;
+
+					case SDLK_z: key[0xA] = 1; break;
+					case SDLK_x: key[0x0] = 1; break;
+					case SDLK_c: key[0xB] = 1; break;
+					case SDLK_v: key[0xF] = 1; break;
+
+					default: break;
+				} break;
+
+			case SDL_KEYUP:
+				switch(event.key.keysym.sym){
+					case SDLK_1: key[0x1] = 0; break;
+					case SDLK_2: key[0x2] = 0; break;
+					case SDLK_3: key[0x3] = 0; break;
+					case SDLK_4: key[0xC] = 0; break;
+
+					case SDLK_q: key[0x4] = 0; break;
+					case SDLK_w: key[0x5] = 0; break;
+					case SDLK_e: key[0x6] = 0; break;
+					case SDLK_r: key[0xD] = 0; break;
+
+					case SDLK_a: key[0x7] = 0; break;
+					case SDLK_s: key[0x8] = 0; break;
+					case SDLK_d: key[0x9] = 0; break;
+					case SDLK_f: key[0xE] = 0; break;
+
+					case SDLK_z: key[0xA] = 0; break;
+					case SDLK_x: key[0x0] = 0; break;
+					case SDLK_c: key[0xB] = 0; break;
+					case SDLK_v: key[0xF] = 0; break;
+
+					default: break;
+				} break;
+
+			case SDL_QUIT: exit(0);
+		}
+	}
 }

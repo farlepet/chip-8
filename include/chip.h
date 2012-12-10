@@ -4,8 +4,8 @@
 #ifndef CHIP_H
 #define CHIP_H
 
-#define WIDTH   64
-#define HEIGHT  32
+#define WIDTH   64*gfx_scale
+#define HEIGHT  32*gfx_scale
 #define BPP     4
 #define DEPTH   32
 
@@ -17,10 +17,11 @@ class chip8 {
 		bool drawFlag;
 
 		void cycle();
+		void process_input();
 		void gfx_upd();
-		bool loadApplication(const char * filename);		
+		void loadRom(const char * filename);		
 
-
+		unsigned char  gfx_scale = 2;
 		unsigned char  gfx[64 * 32];	// Total amount of pixels: 2048
 		unsigned char  key[16];			
 
