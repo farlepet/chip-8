@@ -18,6 +18,7 @@ int ver[4] = {0,1,0,0};
 #include <math.h>
 #include <chip.h>
 #include <unistd.h>
+#include <SDL/SDL.h>
 
 /* 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)  *
  * 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F) *
@@ -36,12 +37,18 @@ int main(int argc, char *argv[])
 	
 	chip.loadRom(argv[1]);
 
+	bool skip = false;
 	int i = 0;
+	int spdup = 0;
 
 	for(;;)
 	{
-		for(i = 0; i < 100; i++)
-			chip.process_input();
+		for(i = 0; (i < 150 - chip.gfx_scale * (chip.gfx_scale/2)) && (!skip || i < 2); i++)
+		{
+			spdup = chip.process_input();
+			if(spdup == -1) skip = false;
+			if(spdup == 1)  skip = true;
+		}
 		chip.cycle();
 		chip.gfx_upd();\
 	}

@@ -17,13 +17,14 @@ class chip8 {
 		bool drawFlag;
 
 		void cycle();
-		void process_input();
+		int process_input();
 		void gfx_upd();
 		void loadRom(const char * filename);		
 
 		unsigned char  gfx_scale = 2;
 		unsigned char  gfx[64 * 32];	// Total amount of pixels: 2048
-		unsigned char  key[16];			
+		unsigned char  key[16];		
+		
 
 	private:	
 		unsigned short pc;				// Program counter
@@ -40,6 +41,7 @@ class chip8 {
 		
 		SDL_Surface *screen;
 		SDL_Event event;
+		
 
 		SDL_Event get_input();
 		
