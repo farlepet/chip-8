@@ -1,6 +1,6 @@
 #####generic conf
 SRC_FILTER = .cpp
-LIBS  = -lm
+LIBS  = -lm -lstdc++
 LIBS += `sdl-config --cflags --libs`
 CFLAGS = -Wall -Wextra -Os -g -ffast-math -I./include/
 LDFLAGS =

@@ -1,5 +1,6 @@
 #include <common.h>
 #include <SDL/SDL.h>
+#include <audio.h>
 
 #ifndef CHIP_H
 #define CHIP_H
@@ -24,7 +25,8 @@ class chip8 {
 		unsigned char  gfx_scale = 2;
 		unsigned char  gfx[64 * 32];	// Total amount of pixels: 2048
 		unsigned char  key[16];		
-		
+
+		void beep();
 
 	private:	
 		unsigned short pc;				// Program counter
@@ -38,6 +40,8 @@ class chip8 {
 				
 		unsigned char  delay_timer;		// Delay timer
 		unsigned char  sound_timer;		// Sound timer	
+
+		Beeper beepr;
 		
 		SDL_Surface *screen;
 		SDL_Event event;
