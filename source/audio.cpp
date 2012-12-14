@@ -1,6 +1,6 @@
 #include <audio.h>
  
-const int AMPLITUDE = 28000;
+const int AMPLITUDE = 18000;
 const int FREQUENCY = 44100;
  
 
@@ -50,17 +50,16 @@ void Beeper::generateSamples(Sint16 *stream, int length)
         bo.samplesLeft -= samplesToDo - i;
  
         while (i < samplesToDo) {
-            stream[i] = AMPLITUDE * ((i & 0x40) == 0x40);//std::sin(v * 2 * M_PI / FREQUENCY);
-            i++;
-            v += bo.freq;
+            stream[i++] = AMPLITUDE * (i & 0x40) * (std::sin((float)(i) / 128.0)); 
+            //v += bo.freq;
         }
  
         if (bo.samplesLeft == 0) {
             beeps.pop();
         }
     }
+
 }
- 
 void Beeper::beep(double freq, int duration)
 {
     BeepObject bo;
